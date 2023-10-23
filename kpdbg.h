@@ -15,6 +15,8 @@ enum ioctl_cmd {
 struct kpdbg_arg {
     uint64_t sym_or_addr;
     uint64_t size_or_idx;
+    uint64_t message;
+    uint64_t msgsz;
 };
 
 #endif

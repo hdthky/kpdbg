@@ -13,6 +13,7 @@
 #include <linux/version.h>
 #include <linux/kallsyms.h>
 #include <linux/kprobes.h>
+#include <linux/slab.h>
 
 #include "kpdbg.h"
 

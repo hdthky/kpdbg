@@ -14,7 +14,7 @@
 
 int main(int argc, char const *argv[])
 {
-    int ret = EXIT_SUCCESS;
+    int ret;
     struct kpdbg_arg arg = {};
 
     int fd = open(KPDBG_DEV_PATH, O_RDONLY);
@@ -28,10 +28,14 @@ int main(int argc, char const *argv[])
         arg.sym_or_addr = (uint64_t)(unsigned long)argv[2];
         arg.size_or_idx = strlen(argv[2]) + 1;
         if (!strcmp(argv[1], "symbol")) {
-            ioctl(fd, CMD_REGISTER_KPROBE_WITH_SYMBOL, &arg);
+            ret = ioctl(fd, CMD_REGISTER_KPROBE_WITH_SYMBOL, &arg);
+            if (ret)
+                perror("ioctl");
         }
         else if (!strcmp(argv[1], "address")) {
-            ioctl(fd, CMD_REGISTER_KPROBE_WITH_ADDRESS, &arg);
+            ret = ioctl(fd, CMD_REGISTER_KPROBE_WITH_ADDRESS, &arg);
+            if (ret)
+                perror("ioctl");
         }
         else
             puts("error command");
@@ -39,5 +43,5 @@ int main(int argc, char const *argv[])
 
     close(fd);
 
-    return ret;
+    return 0;
 }

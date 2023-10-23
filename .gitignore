@@ -1,0 +1,8 @@
+kpdbg.ko
+test
+*.o
+*.cmd
+*.mod*
+*.symvers
+*.order
+.vscode

@@ -15,12 +15,26 @@
 int main(int argc, char const *argv[])
 {
     int ret = EXIT_SUCCESS;
+    struct kpdbg_arg arg = {};
 
     int fd = open(KPDBG_DEV_PATH, O_RDONLY);
 
     if(fd < 0) {
         perror("open");
         exit(EXIT_FAILURE);
+    }
+
+    if (argc == 3) {
+        arg.sym_or_addr = (uint64_t)(unsigned long)argv[2];
+        arg.size_or_idx = strlen(argv[2]) + 1;
+        if (!strcmp(argv[1], "symbol")) {
+            ioctl(fd, CMD_REGISTER_KPROBE_WITH_SYMBOL, &arg);
+        }
+        else if (!strcmp(argv[1], "address")) {
+            ioctl(fd, CMD_REGISTER_KPROBE_WITH_ADDRESS, &arg);
+        }
+        else
+            puts("error command");
     }
 
     close(fd);

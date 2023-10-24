@@ -239,7 +239,7 @@ int kpdbg_parse_address(struct kprobe *kp, struct kpdbg_arg* arg) {
 static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_buffer) { // 不知为何，cmd为2时，不会进入本函数
     struct kprobe *kp;
     struct kpdbg_arg arg;
-    void *message = NULL;
+    char *message = NULL;
     uint64_t idx;
     int ret;
 
@@ -287,7 +287,10 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
         kps[idx] = kp;
         msgs[idx] = message;
 
-        pr_info("regiter kp: %s\n", kp->symbol_name);
+        pr_info("regiter kp: %s", kp->symbol_name);
+        if (message)
+            pr_cont(" message: %s", message);
+        pr_cont("\n");
 
         break;
     case CMD_REGISTER_KPROBE_WITH_ADDRESS:
@@ -331,7 +334,10 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
         kps[idx] = kp;
         msgs[idx] = message;
 
-        pr_info("register kp: %px\n", kp->addr);
+        pr_info("register kp: %px", kp->addr);
+        if (message)
+            pr_cont(" message: %s", message);
+        pr_cont("\n");
 
         break;
     case CMD_UNREGISTER_ALL:

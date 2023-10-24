@@ -196,6 +196,10 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
         msgs[idx] = message;
 
         break;
+    case CMD_UNREGISTER_ALL:
+        free_kps();
+
+        break;
     default:
         break;
     }

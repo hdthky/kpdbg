@@ -111,7 +111,7 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
     char *token;
     char *tmp;
     int len;
-    int ret;
+    int ret = 0;
 
     len = strlen(message);
     tmp = kmalloc(len + 1, GFP_KERNEL);

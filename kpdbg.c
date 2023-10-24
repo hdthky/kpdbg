@@ -70,7 +70,7 @@ int kpdbg_pre_handler(struct kprobe* kp, struct pt_regs* regs) {
     if (msgs[idx])
         pr_info("%s\n", msgs[idx]);
     else
-        pr_info("execute %px", kp->addr);
+        pr_info("execute %px\n", kp->addr);
 
     return 0;
 }

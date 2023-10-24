@@ -26,7 +26,9 @@ int main(int argc, char const *argv[])
 
     if (argc == 2) {
         if (!strcmp(argv[1], "unreg"))
-            ioctl(fd, CMD_UNREGISTER_ALL);
+            ret = ioctl(fd, CMD_UNREGISTER_ALL);
+            if (ret)
+                perror("ioctl");
         else
             puts("error command");
     }

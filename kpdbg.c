@@ -126,11 +126,11 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
 
     pr_debug("[kpdbg] ioctl: cmd is %u\n", cmd);
 
-    if (copy_from_user(&arg, (void *)user_buffer, sizeof(arg)))
-        return -ENOMEM;
-
     switch (cmd) {
     case CMD_REGISTER_KPROBE_WITH_SYMBOL:
+        if (copy_from_user(&arg, (void *)user_buffer, sizeof(arg)))
+            return -EFAULT;
+
         kp = kzalloc(sizeof(*kp), GFP_KERNEL);
         if (!kp)
             return -ENOMEM;
@@ -168,6 +168,9 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
 
         break;
     case CMD_REGISTER_KPROBE_WITH_ADDRESS:
+        if (copy_from_user(&arg, (void *)user_buffer, sizeof(arg)))
+            return -EFAULT;
+
         kp = kzalloc(sizeof(*kp), GFP_KERNEL);
         if (!kp)
             return -ENOMEM;

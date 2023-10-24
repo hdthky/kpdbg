@@ -119,7 +119,9 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
         return -ENOMEM;
     }
     strncpy(tmp, message, len + 1);
-    message = tmp;    
+    message = tmp;
+
+    pr_cont(" message %s", message); 
 
     while (token == strsep(&message, " ")) {
         if (!strcmp(token, "di")) {

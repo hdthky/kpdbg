@@ -126,7 +126,7 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
-            if (!token) {} {
+            if (!token) {
                 ret = -EINVAL;
                 goto out;
             }

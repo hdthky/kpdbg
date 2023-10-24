@@ -112,7 +112,7 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
     int ret;
 
     while (token == strsep(&message, " ")) {
-        if (!strcmp(token, "rdi")) {
+        if (!strcmp(token, "di")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
@@ -122,7 +122,7 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
             if (ret)
                 return ret;
         }
-        else if (!strcmp(token, "rsi")) {
+        else if (!strcmp(token, "si")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
@@ -132,7 +132,7 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
             if (ret)
                 return ret;
         }
-        else if (!strcmp(token, "rdx")) {
+        else if (!strcmp(token, "dx")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
@@ -142,7 +142,7 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
             if (ret)
                 return ret;
         }
-        else if (!strcmp(token, "rcx")) {
+        else if (!strcmp(token, "cx")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");

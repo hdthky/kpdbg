@@ -121,7 +121,7 @@ int kpdbg_parse_message(char *message, struct pt_regs* regs) {
     strncpy(tmp, message, len + 1);
     message = tmp;
 
-    while (token = strsep(&message, " ")) {
+    while ((token = strsep(&message, " "))) {
         if (!strcmp(token, "di")) {
             if (regs)
                 pr_cont(" %s", token);

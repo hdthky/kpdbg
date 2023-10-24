@@ -27,6 +27,8 @@ int main(int argc, char const *argv[])
     if (argc == 2) {
         if (!strcmp(argv[1], "unreg"))
             ioctl(fd, CMD_UNREGISTER_ALL);
+        else
+            puts("error command");
     }
     else if (argc == 3) {
         arg.sym_or_addr = (uint64_t)(unsigned long)argv[2];

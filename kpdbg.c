@@ -30,8 +30,12 @@ void free_kps(void) {
     for(i = 0; i < MAX_NUM_KP; i++) {
         if (kps[i]) {
             unregister_kprobe(kps[i]);
-            if(kps[i]->symbol_name)
+            if(kps[i]->symbol_name) {
+                pr_info("unregister kp: %s\n", kps[i]->symbol_name);
                 kfree(kps[i]->symbol_name);
+            }
+            else
+                pr_info("unregister kp: %px\n", kps[i]->addr);
             kfree(kps[i]);
             kps[i] = NULL;
             if (msgs[i]) {
@@ -160,6 +164,8 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
         kps[idx] = kp;
         msgs[idx] = message;
 
+        pr_info("regiter kp: %s\n", kp->symbol_name);
+
         break;
     case CMD_REGISTER_KPROBE_WITH_ADDRESS:
         kp = kzalloc(sizeof(*kp), GFP_KERNEL);
@@ -194,6 +200,8 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
 
         kps[idx] = kp;
         msgs[idx] = message;
+
+        pr_info("register kp: %px\n", kp->addr);
 
         break;
     case CMD_UNREGISTER_ALL:

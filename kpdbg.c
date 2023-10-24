@@ -188,7 +188,7 @@ int kpdbg_pre_handler(struct kprobe* kp, struct pt_regs* regs) {
         return 0;
     
     if (msgs[idx]) {
-        pr_info("execute %px", kp->addr);
+        pr_info("execute %px:", kp->addr);
         kpdbg_parse_message(msgs[idx], regs);
         pr_cont("\n");
     }

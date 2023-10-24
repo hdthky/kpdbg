@@ -64,6 +64,122 @@ int find_slot(void *needle) {
     return -ENOENT;
 }
 
+#define kpdbg_parse_message_format(token, regs, reg)  ({\
+    int ret; \
+    if (!strcmp(token, "s")) { \
+        if (regs) \
+            pr_cont(" %s", (char *)regs->reg); \
+        ret = 0; \
+    } \
+    else if (!strcmp(token, "i")) { \
+        if (regs) \
+            pr_cont(" %d", (int)regs->reg); \
+        ret = 0; \
+    } \
+    else if (!strcmp(token, "u")) { \
+        if (regs) \
+            pr_cont(" %u", (unsigned int)regs->reg); \
+        ret = 0; \
+    } \
+    else if (!strcmp(token, "x")) { \
+        if (regs) \
+            pr_cont(" %x", (unsigned int)regs->reg); \
+        ret = 0; \
+    } \
+    else if (!strcmp(token, "l")) { \
+        if (regs) \
+            pr_cont(" %ld", (long)regs->reg); \
+        ret = 0; \
+    } \
+    else if (!strcmp(token, "lu")) { \
+        if (regs) \
+            pr_cont(" %lu", (unsigned long)regs->reg); \
+        ret = 0; \
+    } \
+    else if (!strcmp(token, "lx")) { \
+        if (regs) \
+            pr_cont(" %lx", (unsigned long)regs->reg); \
+        ret = 0; \
+    } \
+    else { \
+        ret = -EINVAL; \
+    } \
+    ret; \
+})
+
+int kpdbg_parse_message(char *message, struct pt_regs* regs) {
+    char *token;
+    int ret;
+
+    while (token == strsep(&message, " ")) {
+        if (!strcmp(token, "rdi")) {
+            if (regs)
+                pr_cont(" %s", token);
+            token = strsep(&message, " ");
+            if (!token)
+                return -EINVAL;
+            ret = kpdbg_parse_message_format(token, regs, di);
+            if (ret)
+                return ret;
+        }
+        else if (!strcmp(token, "rsi")) {
+            if (regs)
+                pr_cont(" %s", token);
+            token = strsep(&message, " ");
+            if (!token)
+                return -EINVAL;
+            ret = kpdbg_parse_message_format(token, regs, si);
+            if (ret)
+                return ret;
+        }
+        else if (!strcmp(token, "rdx")) {
+            if (regs)
+                pr_cont(" %s", token);
+            token = strsep(&message, " ");
+            if (!token)
+                return -EINVAL;
+            ret = kpdbg_parse_message_format(token, regs, dx);
+            if (ret)
+                return ret;
+        }
+        else if (!strcmp(token, "rcx")) {
+            if (regs)
+                pr_cont(" %s", token);
+            token = strsep(&message, " ");
+            if (!token)
+                return -EINVAL;
+            ret = kpdbg_parse_message_format(token, regs, cx);
+            if (ret)
+                return ret;
+        }
+        else if (!strcmp(token, "r8")) {
+            if (regs)
+                pr_cont(" %s", token);
+            token = strsep(&message, " ");
+            if (!token)
+                return -EINVAL;
+            ret = kpdbg_parse_message_format(token, regs, r8);
+            if (ret)
+                return ret;
+        }
+        else if (!strcmp(token, "r9")) {
+            if (regs)
+                pr_cont(" %s", token);
+            token = strsep(&message, " ");
+            if (!token)
+                return -EINVAL;
+            ret = kpdbg_parse_message_format(token, regs, r9);
+            if (ret)
+                return ret;
+        }
+        else {
+            return -EINVAL;
+        }
+    }
+
+    return 0;
+}
+
 int kpdbg_pre_handler(struct kprobe* kp, struct pt_regs* regs) {
     int idx;
 
@@ -71,8 +187,11 @@ int kpdbg_pre_handler(struct kprobe* kp, struct pt_regs* regs) {
     if (idx < 0) 
         return 0;
     
-    if (msgs[idx])
-        pr_info("%s\n", msgs[idx]);
+    if (msgs[idx]) {
+        pr_info("execute %px", kp->addr);
+        kpdbg_parse_message(msgs[idx], regs);
+        pr_cont("\n");
+    }
     else
         pr_info("execute %px\n", kp->addr);
 
@@ -148,6 +267,10 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
             if (copy_from_user(message, (void *)(unsigned long)arg.message, arg.msgsz))
                 return -EFAULT;
         }
+
+        ret = kpdbg_parse_message(message, NULL);
+        if (ret)
+            return ret;
         
         idx = get_slot();
         if (idx < 0) 
@@ -188,6 +311,10 @@ static long kpdbg_ioctl(struct file *filp, unsigned int cmd, unsigned long user_
             if (copy_from_user(message, (void *)(unsigned long)arg.message, arg.msgsz))
                 return -EFAULT;
         }
+
+        ret = kpdbg_parse_message(message, NULL);
+        if (ret)
+            return ret;
 
         idx = get_slot();
         if (idx < 0) 

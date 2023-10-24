@@ -33,9 +33,13 @@ int main(int argc, char const *argv[])
         else
             puts("error command");
     }
-    else if (argc == 3) {
+    else if (argc == 3 || argc == 4) {
         arg.sym_or_addr = (uint64_t)(unsigned long)argv[2];
         arg.size_or_idx = strlen(argv[2]) + 1;
+        if (argc == 4) {
+            arg.message = (uint64_t)(unsigned long)argv[3];
+            arg.msgsz = strlen(argv[3]) + 1;
+        }
         if (!strcmp(argv[1], "sym")) {
             ret = ioctl(fd, CMD_REGISTER_KPROBE_WITH_SYMBOL, &arg);
             if (ret)

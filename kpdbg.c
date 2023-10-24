@@ -109,75 +109,99 @@ int find_slot(void *needle) {
 
 int kpdbg_parse_message(char *message, struct pt_regs* regs) {
     char *token;
+    char *tmp;
+    int len;
     int ret;
+
+    len = strlen(message);
+    tmp = kmalloc(len + 1, GFP_KERNEL);
+    if (!tmp) {
+        return -ENOMEM;
+    }
+    strncpy(tmp, message, len + 1);
+    message = tmp;    
 
     while (token == strsep(&message, " ")) {
         if (!strcmp(token, "di")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
-            if (!token)
-                return -EINVAL;
+            if (!token) {} {
+                ret = -EINVAL;
+                goto out;
+            }
             ret = kpdbg_parse_message_format(token, regs, di);
             if (ret)
-                return ret;
+                goto out;
         }
         else if (!strcmp(token, "si")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
-            if (!token)
-                return -EINVAL;
+            if (!token) {
+                ret = -EINVAL;
+                goto out;
+            }
             ret = kpdbg_parse_message_format(token, regs, si);
             if (ret)
-                return ret;
+                goto out;
         }
         else if (!strcmp(token, "dx")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
-            if (!token)
-                return -EINVAL;
+            if (!token) {
+                ret = -EINVAL;
+                goto out;
+            }
             ret = kpdbg_parse_message_format(token, regs, dx);
             if (ret)
-                return ret;
+                goto out;
         }
         else if (!strcmp(token, "cx")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
-            if (!token)
-                return -EINVAL;
+            if (!token) {
+                ret = -EINVAL;
+                goto out;
+            }
             ret = kpdbg_parse_message_format(token, regs, cx);
             if (ret)
-                return ret;
+                goto out;
         }
         else if (!strcmp(token, "r8")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
-            if (!token)
-                return -EINVAL;
+            if (!token) {
+                ret = -EINVAL;
+                goto out;
+            }
             ret = kpdbg_parse_message_format(token, regs, r8);
             if (ret)
-                return ret;
+                goto out;
         }
         else if (!strcmp(token, "r9")) {
             if (regs)
                 pr_cont(" %s", token);
             token = strsep(&message, " ");
-            if (!token)
-                return -EINVAL;
+            if (!token) {
+                ret = -EINVAL;
+                goto out;
+            }
             ret = kpdbg_parse_message_format(token, regs, r9);
             if (ret)
-                return ret;
+                goto out;
         }
         else {
             return -EINVAL;
         }
     }
 
-    return 0;
+out:
+    kfree(tmp);
+    return ret;
 }
 
 int kpdbg_pre_handler(struct kprobe* kp, struct pt_regs* regs) {

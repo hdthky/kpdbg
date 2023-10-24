@@ -34,6 +34,10 @@ void free_kps(void) {
                 kfree(kps[i]->symbol_name);
             kfree(kps[i]);
             kps[i] = NULL;
+            if (msgs[i]) {
+                kfree(msgs[i]);
+                msgs[i] = NULL;
+            }
         }
     }
 }

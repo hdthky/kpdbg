@@ -24,15 +24,19 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    if (argc == 3) {
+    if (argc == 2) {
+        if (!strcmp(argv[1], "unreg"))
+            ioctl(fd, CMD_UNREGISTER_ALL);
+    }
+    else if (argc == 3) {
         arg.sym_or_addr = (uint64_t)(unsigned long)argv[2];
         arg.size_or_idx = strlen(argv[2]) + 1;
-        if (!strcmp(argv[1], "symbol")) {
+        if (!strcmp(argv[1], "sym")) {
             ret = ioctl(fd, CMD_REGISTER_KPROBE_WITH_SYMBOL, &arg);
             if (ret)
                 perror("ioctl");
         }
-        else if (!strcmp(argv[1], "address")) {
+        else if (!strcmp(argv[1], "addr")) {
             ret = ioctl(fd, CMD_REGISTER_KPROBE_WITH_ADDRESS, &arg);
             if (ret)
                 perror("ioctl");
